@@ -68,6 +68,41 @@ class SocialSharePlugin:FlutterPlugin, MethodCallHandler, ActivityAware {
             } else {
                 result.success("error")
             }
+        } else if (call.method == "sharedInstagram") {
+
+            val stickerImage: String? = call.argument("stickerImage")
+            val attributionURL: String? = call.argument("attributionURL")
+            val file = File(activeContext!!.cacheDir, stickerImage)
+            val stickerImageFile = FileProvider.getUriForFile(activeContext!!, activeContext!!.applicationContext.packageName + ".com.shekarmudaliyar.social_share", file)
+            val intent = Intent(Intent.ACTION_SEND)
+            Log.d("log", stickerImage)
+            var media = stickerImage?.endsWith("mp4")
+            if (media == true) {
+                intent.type = "video/*"
+                Log.d("log", "video done")
+                Log.d("log", stickerImage)
+            } else {
+                intent.type = "image/*"
+                Log.d("log", "image set")
+                Log.d("log", stickerImage)
+            }
+
+            intent.setPackage("com.instagram.android")
+            intent.putExtra(Intent.EXTRA_STREAM, stickerImageFile);
+            intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+//
+            intent.putExtra("content_url", attributionURL)
+            Log.d("", registrar.activity().toString())
+            // Instantiate activity and verify it will resolve implicit intent
+            //val activity: Activity = registrar.activity()
+            activity!!.grantUriPermission("com.instagram.android", stickerImageFile, Intent.FLAG_GRANT_READ_URI_PERMISSION)
+            if (activity!!.packageManager.resolveActivity(intent, 0) != null) {
+                activeContext!!.startActivity(intent)
+                result.success("success")
+            } else {
+                result.success("error")
+            }
+
         } else if (call.method == "shareFacebookStory") {
             //share on facebook story
             val stickerImage: String? = call.argument("stickerImage")
@@ -76,7 +111,7 @@ class SocialSharePlugin:FlutterPlugin, MethodCallHandler, ActivityAware {
             val attributionURL: String? = call.argument("attributionURL")
             val appId: String? = call.argument("appId")
 
-            val file =  File(activeContext!!.cacheDir,stickerImage)
+            val file = File(activeContext!!.cacheDir, stickerImage)
             val stickerImageFile = FileProvider.getUriForFile(activeContext!!, activeContext!!.applicationContext.packageName + ".com.shekarmudaliyar.social_share", file)
             val intent = Intent("com.facebook.stories.ADD_TO_STORY")
             intent.type = "image/*"
@@ -96,6 +131,46 @@ class SocialSharePlugin:FlutterPlugin, MethodCallHandler, ActivityAware {
             } else {
                 result.success("error")
             }
+        } else if (call.method == "shareFacebookFeed") {
+
+            val stickerImage: String? = call.argument("stickerImage")
+            val content: String? = call.argument("content")
+            val appId: String? = call.argument("appId")
+
+            val file = File(activeContext!!.cacheDir, stickerImage)
+            val stickerImageFile = FileProvider.getUriForFile(activeContext!!, activeContext!!.applicationContext.packageName + ".com.shekarmudaliyar.social_share", file)
+            val intent = Intent(Intent.ACTION_SEND)
+            intent.type = "*/*"
+            intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+            intent.putExtra("com.facebook.platform.extra.APPLICATION_ID", appId)
+
+            intent.putExtra("content_url", content)
+            intent.putExtra(Intent.EXTRA_STREAM, stickerImageFile);
+            Log.d("", activity!!.toString())
+            // Instantiate activity and verify it will resolve implicit intent
+            //val activity: Activity = registrar.activity()
+            var facebookAppFound = false
+
+            val matches: List<ResolveInfo> = activity!!.getPackageManager().queryIntentActivities(intent, PackageManager.MATCH_DEFAULT_ONLY)
+            for (info in matches) {
+                if (info.activityInfo.packageName.toLowerCase().startsWith("com.facebook.katana") ||
+                        info.activityInfo.packageName.toLowerCase().startsWith("com.facebook.lite")) {
+                    intent.setPackage(info.activityInfo.packageName)
+                    facebookAppFound = true
+                    break
+                }
+            }
+
+            if (facebookAppFound) {
+                activeContext!!.startActivity(intent)
+                result.success("success")
+            } else {
+                //showWarningDialog(appCompatActivity, appCompatActivity.getString(R.string.error_activity_not_found));
+                result.success("error")
+
+            }
+
+
         } else if (call.method == "shareOptions") {
             //native share options
             val content: String? = call.argument("content")
@@ -103,9 +178,9 @@ class SocialSharePlugin:FlutterPlugin, MethodCallHandler, ActivityAware {
             val intent = Intent()
             intent.action = Intent.ACTION_SEND
 
-            if (image!=null) {
+            if (image != null) {
                 //check if  image is also provided
-                val imagefile =  File(activeContext!!.cacheDir,image)
+                val imagefile = File(activeContext!!.cacheDir, image)
                 val imageFileUri = FileProvider.getUriForFile(activeContext!!, activeContext!!.applicationContext.packageName + ".com.shekarmudaliyar.social_share", imagefile)
                 intent.type = "image/*"
                 intent.putExtra(Intent.EXTRA_STREAM,imageFileUri)
@@ -126,30 +201,50 @@ class SocialSharePlugin:FlutterPlugin, MethodCallHandler, ActivityAware {
         } else if (call.method == "copyToClipboard") {
             //copies content onto the clipboard
             val content: String? = call.argument("content")
-            val clipboard =context!!.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+            val clipboard = context!!.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
             val clip = ClipData.newPlainText("", content)
             clipboard.setPrimaryClip(clip)
             result.success(true)
         } else if (call.method == "shareWhatsapp") {
             //shares content on WhatsApp
             val content: String? = call.argument("content")
+            val stickerImage: String? = call.argument("stickerImage")
+            val file = File(activeContext!!.cacheDir, stickerImage)
+            val stickerImageFile = FileProvider.getUriForFile(activeContext!!, activeContext!!.applicationContext.packageName + ".com.shekarmudaliyar.social_share", file)
+            val whatsappIntent = Intent(Intent.ACTION_SEND)
+            whatsappIntent.type = "*/*"
+            whatsappIntent.setPackage("com.whatsapp")
+            whatsappIntent.putExtra(Intent.EXTRA_TEXT, content)
+            whatsappIntent.putExtra(Intent.EXTRA_STREAM, stickerImageFile);
+            whatsappIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+
+            //val activity: Activity = registrar.activity()
+            activity!!.grantUriPermission("com.whatsapp", stickerImageFile, Intent.FLAG_GRANT_READ_URI_PERMISSION)
+            if (activity!!.packageManager.resolveActivity(whatsappIntent, 0) != null) {
+                activeContext!!.startActivity(whatsappIntent)
+                result.success("success")
+            } else {
+                result.success("error")
+            }
+            //shares content on WhatsApp
+            /*val content: String? = call.argument("content")
             val whatsappIntent = Intent(Intent.ACTION_SEND)
             whatsappIntent.type = "text/plain"
             whatsappIntent.setPackage("com.whatsapp")
             whatsappIntent.putExtra(Intent.EXTRA_TEXT, content)
             try {
-                activity!!.startActivity(whatsappIntent)
+                registrar.activity().startActivity(whatsappIntent)
                 result.success("true")
             } catch (ex: ActivityNotFoundException) {
                 result.success("false")
-            }
+            }*/
         } else if (call.method == "shareSms") {
             //shares content on sms
             val content: String? = call.argument("message")
             val intent = Intent(Intent.ACTION_SENDTO)
             intent.addCategory(Intent.CATEGORY_DEFAULT)
             intent.type = "vnd.android-dir/mms-sms"
-            intent.data = Uri.parse("sms:" )
+            intent.data = Uri.parse("sms:")
             intent.putExtra("sms_body", content)
             try {
                 activity!!.startActivity(intent)
@@ -158,6 +253,38 @@ class SocialSharePlugin:FlutterPlugin, MethodCallHandler, ActivityAware {
                 result.success("false")
             }
         } else if (call.method == "shareTwitter") {
+            val stickerImage: String? = call.argument("stickerImage")
+            val text: String? = call.argument("captionText")
+            val url: String? = call.argument("url")
+            val trailingText: String? = call.argument("trailingText")
+            val file = File(activeContext!!.cacheDir, stickerImage)
+            val stickerImageFile = FileProvider.getUriForFile(activeContext!!, activeContext!!.applicationContext.packageName + ".com.shekarmudaliyar.social_share", file)
+
+            val intent = Intent(Intent.ACTION_SEND)
+
+            intent.setPackage("com.twitter.android")
+            intent.putExtra(Intent.EXTRA_TEXT, text)
+            intent.type = "text/plain"
+            intent.putExtra(Intent.EXTRA_TEXT, trailingText)
+            intent.putExtra(Intent.EXTRA_TEXT, url)
+            intent.putExtra(Intent.EXTRA_STREAM, stickerImageFile);
+            intent.type = "*/*"
+            intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+            //  Log.d("log",urlScheme)
+
+            activity!!.grantUriPermission("com.twitter.android", stickerImageFile, Intent.FLAG_GRANT_READ_URI_PERMISSION)
+            if (activity!!.packageManager.resolveActivity(intent, 0) != null) {
+                activeContext!!.startActivity(intent)
+                result.success("success")
+            } else {
+
+                result.success("error")
+            }
+
+        }
+
+        /*
+        else if (call.method == "shareTwitter") {
             //shares content on twitter
             val text: String? = call.argument("captionText")
             val url: String? = call.argument("url")
@@ -172,7 +299,7 @@ class SocialSharePlugin:FlutterPlugin, MethodCallHandler, ActivityAware {
             } catch (ex: ActivityNotFoundException) {
                 result.success("false")
             }
-        }
+        }*/
         else if (call.method == "shareTelegram") {
             //shares content on Telegram
             val content: String? = call.argument("content")
@@ -203,11 +330,11 @@ class SocialSharePlugin:FlutterPlugin, MethodCallHandler, ActivityAware {
             //if sms app exists
             apps["sms"] = resolvedActivities.isNotEmpty()
             //if other app exists
-            apps["instagram"] = packages.any  { it.packageName.toString().contentEquals("com.instagram.android") }
-            apps["facebook"] = packages.any  { it.packageName.toString().contentEquals("com.facebook.katana") }
-            apps["twitter"] = packages.any  { it.packageName.toString().contentEquals("com.twitter.android") }
-            apps["whatsapp"] = packages.any  { it.packageName.toString().contentEquals("com.whatsapp") }
-            apps["telegram"] = packages.any  { it.packageName.toString().contentEquals("org.telegram.messenger") }
+            apps["instagram"] = packages.any { it.packageName.toString().contentEquals("com.instagram.android") }
+            apps["facebook"] = packages.any { it.packageName.toString().contentEquals("com.facebook.katana") }
+            apps["twitter"] = packages.any { it.packageName.toString().contentEquals("com.twitter.android") }
+            apps["whatsapp"] = packages.any { it.packageName.toString().contentEquals("com.whatsapp") }
+            apps["telegram"] = packages.any { it.packageName.toString().contentEquals("org.telegram.messenger") }
 
             result.success(apps)
         } else {
