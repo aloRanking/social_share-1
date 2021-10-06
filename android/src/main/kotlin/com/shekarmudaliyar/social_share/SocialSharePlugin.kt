@@ -92,7 +92,7 @@ class SocialSharePlugin:FlutterPlugin, MethodCallHandler, ActivityAware {
             intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
 //
             intent.putExtra("content_url", attributionURL)
-            Log.d("", registrar.activity().toString())
+            Log.d("", activity!!.toString())
             // Instantiate activity and verify it will resolve implicit intent
             //val activity: Activity = registrar.activity()
             activity!!.grantUriPermission("com.instagram.android", stickerImageFile, Intent.FLAG_GRANT_READ_URI_PERMISSION)
