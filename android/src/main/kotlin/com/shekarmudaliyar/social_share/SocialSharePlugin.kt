@@ -75,7 +75,7 @@ class SocialSharePlugin:FlutterPlugin, MethodCallHandler, ActivityAware {
             val file = File(activeContext!!.cacheDir, stickerImage)
             val stickerImageFile = FileProvider.getUriForFile(activeContext!!, activeContext!!.applicationContext.packageName + ".com.shekarmudaliyar.social_share", file)
             val intent = Intent(Intent.ACTION_SEND)
-            Log.d("log", stickerImage!)
+            Log.d("log", stickerImage!!)
             var media = stickerImage?.endsWith("mp4")
             if (media == true) {
                 intent.type = "video/*"
