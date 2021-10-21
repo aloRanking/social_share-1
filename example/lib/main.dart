@@ -132,14 +132,14 @@ class _MyAppState extends State<MyApp> {
                 ),
                 RaisedButton(
                   onPressed: () async {
-                    SocialShare.shareTwitter(
+                    /*SocialShare.shareTwitter(
                       "This is Social Share twitter example",
                       hashtags: ["hello", "world", "foo", "bar"],
                       url: "https://google.com/#/hello",
                       trailingText: "\nhello",
                     ).then((data) {
                       print(data);
-                    });
+                    });*/
                   },
                   child: Text("Share on twitter"),
                 ),
@@ -167,11 +167,11 @@ class _MyAppState extends State<MyApp> {
                 ),
                 RaisedButton(
                   onPressed: () async {
-                    SocialShare.shareWhatsapp(
+                    /* SocialShare.shareWhatsapp(
                       "Hello World \n https://google.com",
                     ).then((data) {
                       print(data);
-                    });
+                    });*/
                   },
                   child: Text("Share on Whatsapp"),
                 ),
