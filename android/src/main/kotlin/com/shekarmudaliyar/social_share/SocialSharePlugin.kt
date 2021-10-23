@@ -213,19 +213,41 @@ class SocialSharePlugin:FlutterPlugin, MethodCallHandler, ActivityAware {
             val stickerImageFile = FileProvider.getUriForFile(activeContext!!, activeContext!!.applicationContext.packageName + ".com.shekarmudaliyar.social_share", file)
             val whatsappIntent = Intent(Intent.ACTION_SEND)
             whatsappIntent.type = "*/*"
-            whatsappIntent.setPackage("com.whatsapp")
+            //whatsappIntent.setPackage("com.whatsapp")
             whatsappIntent.putExtra(Intent.EXTRA_TEXT, content)
             whatsappIntent.putExtra(Intent.EXTRA_STREAM, stickerImageFile);
             whatsappIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
 
-            //val activity: Activity = registrar.activity()
-            activity!!.grantUriPermission("com.whatsapp", stickerImageFile, Intent.FLAG_GRANT_READ_URI_PERMISSION)
-            if (activity!!.packageManager.resolveActivity(whatsappIntent, 0) != null) {
-                activeContext!!.startActivity(whatsappIntent)
+            var whatsAppFound = false
+
+            val matches: List<ResolveInfo> = activity!!.getPackageManager().queryIntentActivities(intent, PackageManager.MATCH_DEFAULT_ONLY)
+            for (info in matches) {
+                if (info.activityInfo.packageName.toLowerCase().startsWith("com.whatsapp") ||
+                        info.activityInfo.packageName.toLowerCase().startsWith("com.yowhatsapp") ||
+                        info.activityInfo.packageName.toLowerCase().startsWith("com.gbwhatsapp")) {
+                    intent.setPackage(info.activityInfo.packageName)
+                    whatsAppFound = true
+                    break
+                }
+            }
+
+            if (whatsAppFound) {
+                activeContext!!.startActivity(intent)
                 result.success("success")
             } else {
+                //showWarningDialog(appCompatActivity, appCompatActivity.getString(R.string.error_activity_not_found));
                 result.success("error")
+
             }
+
+            //val activity: Activity = registrar.activity()
+            /* activity!!.grantUriPermission("com.whatsapp", stickerImageFile, Intent.FLAG_GRANT_READ_URI_PERMISSION)
+             if (activity!!.packageManager.resolveActivity(whatsappIntent, 0) != null) {
+                 activeContext!!.startActivity(whatsappIntent)
+                 result.success("success")
+             } else {
+                 result.success("error")
+             }*/
             //shares content on WhatsApp
             /*val content: String? = call.argument("content")
             val whatsappIntent = Intent(Intent.ACTION_SEND)
