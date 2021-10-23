@@ -220,19 +220,19 @@ class SocialSharePlugin:FlutterPlugin, MethodCallHandler, ActivityAware {
 
             var whatsAppFound = false
 
-            val matches: List<ResolveInfo> = activity!!.getPackageManager().queryIntentActivities(intent, PackageManager.MATCH_DEFAULT_ONLY)
+            val matches: List<ResolveInfo> = activity!!.getPackageManager().queryIntentActivities(whatsappIntent, PackageManager.MATCH_DEFAULT_ONLY)
             for (info in matches) {
                 if (info.activityInfo.packageName.toLowerCase().startsWith("com.whatsapp") ||
                         info.activityInfo.packageName.toLowerCase().startsWith("com.yowhatsapp") ||
                         info.activityInfo.packageName.toLowerCase().startsWith("com.gbwhatsapp")) {
-                    intent.setPackage(info.activityInfo.packageName)
+                    whatsappIntent.setPackage(info.activityInfo.packageName)
                     whatsAppFound = true
                     break
                 }
             }
 
             if (whatsAppFound) {
-                activeContext!!.startActivity(intent)
+                activeContext!!.startActivity(whatsappIntent)
                 result.success("success")
             } else {
                 //showWarningDialog(appCompatActivity, appCompatActivity.getString(R.string.error_activity_not_found));
