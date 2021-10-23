@@ -225,14 +225,14 @@ class SocialSharePlugin:FlutterPlugin, MethodCallHandler, ActivityAware {
                 if (info.activityInfo.packageName.toLowerCase().startsWith("com.whatsapp") ||
                         info.activityInfo.packageName.toLowerCase().startsWith("com.yowhatsapp") ||
                         info.activityInfo.packageName.toLowerCase().startsWith("com.gbwhatsapp")) {
-                    intent.setPackage(info.activityInfo.packageName)
+                    whatsappIntent.setPackage(info.activityInfo.packageName)
                     whatsAppFound = true
                     break
                 }
             }
 
             if (whatsAppFound) {
-                activeContext!!.startActivity(intent)
+                activeContext!!.startActivity(whatsappIntent)
                 result.success("success")
             } else {
                 //showWarningDialog(appCompatActivity, appCompatActivity.getString(R.string.error_activity_not_found));
