@@ -90,6 +90,7 @@ class SocialSharePlugin:FlutterPlugin, MethodCallHandler, ActivityAware {
             intent.setPackage("com.instagram.android")
             intent.putExtra(Intent.EXTRA_STREAM, stickerImageFile);
             intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
 //
             intent.putExtra("content_url", attributionURL)
             Log.d("", activity!!.toString())
@@ -142,6 +143,7 @@ class SocialSharePlugin:FlutterPlugin, MethodCallHandler, ActivityAware {
             val intent = Intent(Intent.ACTION_SEND)
             intent.type = "*/*"
             intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
             intent.putExtra("com.facebook.platform.extra.APPLICATION_ID", appId)
 
             intent.putExtra("content_url", content)
@@ -217,9 +219,9 @@ class SocialSharePlugin:FlutterPlugin, MethodCallHandler, ActivityAware {
             whatsappIntent.putExtra(Intent.EXTRA_TEXT, content)
             whatsappIntent.putExtra(Intent.EXTRA_STREAM, stickerImageFile);
             whatsappIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+            whatsappIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
 
             var whatsAppFound = false
-
             val matches: List<ResolveInfo> = activity!!.getPackageManager().queryIntentActivities(whatsappIntent, PackageManager.MATCH_DEFAULT_ONLY)
             for (info in matches) {
                 if (info.activityInfo.packageName.toLowerCase().startsWith("com.whatsapp") ||
@@ -292,6 +294,7 @@ class SocialSharePlugin:FlutterPlugin, MethodCallHandler, ActivityAware {
             intent.putExtra(Intent.EXTRA_STREAM, stickerImageFile);
             intent.type = "*/*"
             intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
             //  Log.d("log",urlScheme)
 
             activity!!.grantUriPermission("com.twitter.android", stickerImageFile, Intent.FLAG_GRANT_READ_URI_PERMISSION)
