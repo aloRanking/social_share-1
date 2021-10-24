@@ -234,7 +234,7 @@ class SocialSharePlugin:FlutterPlugin, MethodCallHandler, ActivityAware {
             }
 
             if (whatsAppFound) {
-                activeContext!!.startActivity(whatsappIntent)
+                activity!!.startActivity(whatsappIntent)
                 result.success("success")
             } else {
                 //showWarningDialog(appCompatActivity, appCompatActivity.getString(R.string.error_activity_not_found));
