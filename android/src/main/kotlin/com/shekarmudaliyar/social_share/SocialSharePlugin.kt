@@ -254,26 +254,25 @@ class SocialSharePlugin:FlutterPlugin, MethodCallHandler, ActivityAware {
 
             }
 
-            //val activity: Activity = registrar.activity()
-            /* activity!!.grantUriPermission("com.whatsapp", stickerImageFile, Intent.FLAG_GRANT_READ_URI_PERMISSION)
-             if (activity!!.packageManager.resolveActivity(whatsappIntent, 0) != null) {
-                 activeContext!!.startActivity(whatsappIntent)
-                 result.success("success")
-             } else {
-                 result.success("error")
-             }*/
-            //shares content on WhatsApp
-            /*val content: String? = call.argument("content")
-            val whatsappIntent = Intent(Intent.ACTION_SEND)
-            whatsappIntent.type = "text/plain"
-            whatsappIntent.setPackage("com.whatsapp")
-            whatsappIntent.putExtra(Intent.EXTRA_TEXT, content)
+        } else if (call.method == "shareTelegram") {
+            //shares content on Telegram
+            val content: String? = call.argument("content")
+            val stickerImage: String? = call.argument("stickerImage")
+            val file = File(activeContext!!.cacheDir, stickerImage)
+            val stickerImageFile = FileProvider.getUriForFile(activeContext!!, activeContext!!.applicationContext.packageName + ".com.shekarmudaliyar.social_share", file)
+            val telegramIntent = Intent(Intent.ACTION_SEND)
+            telegramIntent.type = "*/*"
+            telegramIntent.setPackage("org.telegram.messenger")
+            telegramIntent.putExtra(Intent.EXTRA_TEXT, content)
+            telegramIntent.putExtra(Intent.EXTRA_STREAM, stickerImageFile);
+            telegramIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+            telegramIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
             try {
-                registrar.activity().startActivity(whatsappIntent)
+                activity!!.startActivity(telegramIntent)
                 result.success("true")
             } catch (ex: ActivityNotFoundException) {
                 result.success("false")
-            }*/
+            }
         } else if (call.method == "shareSms") {
             //shares content on sms
             val content: String? = call.argument("message")
@@ -341,20 +340,6 @@ class SocialSharePlugin:FlutterPlugin, MethodCallHandler, ActivityAware {
                 result.success("false")
             }
         }*/
-        else if (call.method == "shareTelegram") {
-            //shares content on Telegram
-            val content: String? = call.argument("content")
-            val telegramIntent = Intent(Intent.ACTION_SEND)
-            telegramIntent.type = "text/plain"
-            telegramIntent.setPackage("org.telegram.messenger")
-            telegramIntent.putExtra(Intent.EXTRA_TEXT, content)
-            try {
-                activity!!.startActivity(telegramIntent)
-                result.success("true")
-            } catch (ex: ActivityNotFoundException) {
-                result.success("false")
-            }
-        }
         else if (call.method == "checkInstalledApps") {
             //check if the apps exists
             //creating a mutable map of apps
