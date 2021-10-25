@@ -213,10 +213,18 @@ class _MyAppState extends State<MyApp> {
                 ),
                 RaisedButton(
                   onPressed: () async {
-                    SocialShare.shareTelegram(
-                      "Hello World \n https://google.com",
-                    ).then((data) {
-                      print(data);
+                    await screenshotController.capture().then((image) async {
+                      final directory =
+                          await getApplicationDocumentsDirectory();
+                      final file =
+                          await File('${directory.path}/temp.png').create();
+                      await file.writeAsBytes(image);
+                      SocialShare.shareTelegram(
+                        file.path,
+                        "Hello World \n https://google.com",
+                      ).then((data) {
+                        print(data);
+                      });
                     });
                   },
                   child: Text("Share on Telegram"),

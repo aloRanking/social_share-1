@@ -254,6 +254,31 @@ class SocialShare {
     return version;
   }
 
+  static Future<String?> shareTelegram(String imagePath, String content) async {
+    File file = File(imagePath);
+    Uint8List bytes = file.readAsBytesSync();
+    var stickerdata = bytes.buffer.asUint8List();
+    final tempDir = await getTemporaryDirectory();
+    String stickerAssetName;
+    if (imagePath.endsWith('mp4')) {
+      stickerAssetName = 'stickerAsset.mp4';
+    } else {
+      stickerAssetName = 'stickerAsset.png';
+    }
+
+    final Uint8List stickerAssetAsList = stickerdata;
+    final stickerAssetPath = '${tempDir.path}/$stickerAssetName';
+    file = await File(stickerAssetPath).create();
+    file.writeAsBytesSync(stickerAssetAsList);
+    final Map<String, dynamic> args = <String, dynamic>{
+      "stickerImage": stickerAssetName,
+      "content": content
+    };
+
+    final String? version = await _channel.invokeMethod('shareTelegram', args);
+    return version;
+  }
+
   static Future<String?> shareSms(String message,
       {String? url, String? trailingText}) async {
     Map<String, dynamic>? args;
@@ -316,11 +341,11 @@ class SocialShare {
     return apps;
   }
 
-  static Future<String?> shareTelegram(String content) async {
+/* static Future<String?> shareTelegram(String content) async {
     final Map<String, dynamic> args = <String, dynamic>{"content": content};
     final String? version = await _channel.invokeMethod('shareTelegram', args);
     return version;
-  }
+  }*/
 
 // static Future<String> shareSlack() async {
 //   final String version = await _channel.invokeMethod('shareSlack');
