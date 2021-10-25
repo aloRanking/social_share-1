@@ -110,16 +110,28 @@ class _MyAppState extends State<MyApp> {
                       })
                           : SocialShare.shareFacebookStory(
                         file.path,
-                        "#ffffff",
-                        "#000000",
-                        "https://google.com",
-                      ).then((data) {
-                        print(data);
-                      });
+                              "#ffffff",
+                              "#000000",
+                              "https://google.com",
+                            ).then((data) {
+                              print(data);
+                            });
                     });
                   },
                   child: Text("Share On Facebook Story"),
                 ),
+                ElevatedButton(
+                    onPressed: () async {
+                      await screenshotController.capture().then((image) async {
+                        final directory =
+                            await getApplicationDocumentsDirectory();
+                        final file =
+                            await File('${directory.path}/temp.png').create();
+                        await file.writeAsBytes(image);
+                        SocialShare.shareFacebookFeed(file.path, 'what up');
+                      });
+                    },
+                    child: Text('FaceBook')),
                 RaisedButton(
                   onPressed: () async {
                     SocialShare.copyToClipboard(
@@ -132,14 +144,23 @@ class _MyAppState extends State<MyApp> {
                 ),
                 RaisedButton(
                   onPressed: () async {
-                    /*SocialShare.shareTwitter(
-                      "This is Social Share twitter example",
-                      hashtags: ["hello", "world", "foo", "bar"],
-                      url: "https://google.com/#/hello",
-                      trailingText: "\nhello",
-                    ).then((data) {
-                      print(data);
-                    });*/
+                    await screenshotController.capture().then((image) async {
+                      final directory =
+                          await getApplicationDocumentsDirectory();
+                      final file =
+                          await File('${directory.path}/temp.png').create();
+                      await file.writeAsBytes(image);
+
+                      SocialShare.shareTwitter(
+                        file.path,
+                        "This is Social Share twitter example",
+                        hashtags: ["hello", "world", "foo", "bar"],
+                        url: "https://google.com/#/hello",
+                        trailingText: "\nhello",
+                      ).then((data) {
+                        print(data);
+                      });
+                    });
                   },
                   child: Text("Share on twitter"),
                 ),
@@ -158,7 +179,14 @@ class _MyAppState extends State<MyApp> {
                 RaisedButton(
                   onPressed: () async {
                     await screenshotController.capture().then((image) async {
-                      SocialShare.shareOptions("Hello world").then((data) {
+                      final directory =
+                          await getApplicationDocumentsDirectory();
+                      final file =
+                          await File('${directory.path}/temp.png').create();
+                      await file.writeAsBytes(image);
+                      SocialShare.shareOptions("Hello world",
+                              imagePath: file.path)
+                          .then((data) {
                         print(data);
                       });
                     });
@@ -167,11 +195,19 @@ class _MyAppState extends State<MyApp> {
                 ),
                 RaisedButton(
                   onPressed: () async {
-                    /* SocialShare.shareWhatsapp(
-                      "Hello World \n https://google.com",
-                    ).then((data) {
-                      print(data);
-                    });*/
+                    await screenshotController.capture().then((image) async {
+                      final directory =
+                          await getApplicationDocumentsDirectory();
+                      final file =
+                          await File('${directory.path}/temp.png').create();
+                      await file.writeAsBytes(image);
+                      SocialShare.shareWhatsapp(
+                        file.path,
+                        "Hello World \n https://google.com",
+                      ).then((data) {
+                        print(data);
+                      });
+                    });
                   },
                   child: Text("Share on Whatsapp"),
                 ),

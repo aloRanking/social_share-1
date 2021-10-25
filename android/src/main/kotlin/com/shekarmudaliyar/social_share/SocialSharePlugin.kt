@@ -143,7 +143,7 @@ class SocialSharePlugin:FlutterPlugin, MethodCallHandler, ActivityAware {
             val intent = Intent(Intent.ACTION_SEND)
             intent.type = "*/*"
             intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
             intent.putExtra("com.facebook.platform.extra.APPLICATION_ID", appId)
 
             intent.putExtra("content_url", content)
@@ -158,6 +158,7 @@ class SocialSharePlugin:FlutterPlugin, MethodCallHandler, ActivityAware {
                 if (info.activityInfo.packageName.toLowerCase().startsWith("com.facebook.katana") ||
                         info.activityInfo.packageName.toLowerCase().startsWith("com.facebook.lite")) {
                     intent.setPackage(info.activityInfo.packageName)
+                    // intent.setClassName(info.activityInfo.packageName, "com.facebook.lite.ShareLinkActivity" )
                     facebookAppFound = true
                     break
                 }
@@ -287,14 +288,18 @@ class SocialSharePlugin:FlutterPlugin, MethodCallHandler, ActivityAware {
             val intent = Intent(Intent.ACTION_SEND)
 
             intent.setPackage("com.twitter.android")
-            intent.putExtra(Intent.EXTRA_TEXT, text)
-            intent.type = "text/plain"
-            intent.putExtra(Intent.EXTRA_TEXT, trailingText)
-            intent.putExtra(Intent.EXTRA_TEXT, url)
-            intent.putExtra(Intent.EXTRA_STREAM, stickerImageFile);
-            intent.type = "*/*"
-            intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+            //intent.setClassName("com.twitter.android", "com.twitter.android.composer.ComposerActivity" )
+
+            //intent.type = "text/plain"
+            /*intent.putExtra(Intent.EXTRA_TEXT, trailingText)
+            intent.putExtra(Intent.EXTRA_TEXT, url)*/
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            intent.type = "*/*"
+            intent.putExtra(Intent.EXTRA_STREAM, stickerImageFile);
+            intent.putExtra(Intent.EXTRA_TEXT, text)
+
+            intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+
             //  Log.d("log",urlScheme)
 
             activity!!.grantUriPermission("com.twitter.android", stickerImageFile, Intent.FLAG_GRANT_READ_URI_PERMISSION)
